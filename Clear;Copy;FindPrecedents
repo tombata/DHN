@@ -1,1 +1,110 @@
-Option ExplicitSub Clear2()Sheets("DHN Europe 799026").Cells.ClearContentsSheets("DHN Europe 799261").Cells.ClearContentsSheets("DHN Europe 799271").Cells.ClearContentsSheets("DHN Europe 799448").Cells.ClearContentsSheets("DHN Non-Europe 799026").Cells.ClearContentsSheets("DHN Non-Europe 799448").Cells.ClearContentsSheets("DHN Block Europe").Cells.ClearContentsSheets("DHN Block Non-Europe").Cells.ClearContents    End SubSub Einlesen2()    With Workbooks.Open("S:\INM\MME9EG\Zahlenwerk MMA2EG Equities\DHN\DHN_Europa.xls")    .Sheets("Bericht_799026").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Europe 799026").Range("A1")    .Sheets("Bericht_799271").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Europe 799271").Range("A1")    .Sheets("Bericht_799448").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Europe 799448").Range("A1")End WithWorkbooks("DHN_Europa.xls").CloseWith Workbooks.Open("S:\INM\MME9EG\Zahlenwerk MMA2EG Equities\DHN\DHN_Non Europa.xls")    .Sheets("Bericht_799026").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Non-Europe 799026").Range("A1")    .Sheets("Bericht_799448").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Non-Europe 799448").Range("A1")End WithWorkbooks("DHN_Non Europa.xls").CloseWith Workbooks.Open("S:\INM\MME9EG\Zahlenwerk MMA2EG Equities\DHN\DHN_Blockorder_Europa.xls")    .Sheets("Bericht1").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Block Europe").Range("A1")    .Sheets("Bericht1").Range("B4:IV50000").Copy _            ThisWorkbook.Sheets("DHN Block Non-Europe").Range("A1")End WithWorkbooks("DHN_Blockorder_Europa.xls").Close  End SubSub FindPrecedents()         Dim rLast As Range, iLinkNum As Integer, iArrowNum As Integer    Dim stMsg As String    Dim x As String    Dim y As String        Dim bNewArrow As Boolean    Application.ScreenUpdating = False    ActiveCell.ShowPrecedents    Set rLast = ActiveCell    iArrowNum = 1    iLinkNum = 1    bNewArrow = True    Do        Do            Application.Goto rLast            On Error Resume Next            ActiveCell.NavigateArrow TowardPrecedent:=True, ArrowNumber:=iArrowNum, LinkNumber:=iLinkNum            If Err.Number > 0 Then Exit Do            On Error GoTo 0            If rLast.Address(external:=True) = ActiveCell.Address(external:=True) Then Exit Do            bNewArrow = False            If rLast.Worksheet.Parent.Name = ActiveCell.Worksheet.Parent.Name Then                If rLast.Worksheet.Name = ActiveCell.Parent.Name Then                     ' local                    stMsg = stMsg & Selection.Address                Else                    stMsg = stMsg & "'" & Selection.Parent.Name & "'!" & Selection.Address                End If            Else                 ' external                               stMsg = stMsg & vbNewLine & Selection.Address(external:=True)            End If            iLinkNum = iLinkNum + 1 ' try another  link        Loop        If bNewArrow Then Exit Do        iLinkNum = 1        bNewArrow = True        iArrowNum = iArrowNum + 1 'try another arrow    Loop    rLast.Parent.ClearArrows    Application.Goto rLast      x = Right(stMsg, Len(stMsg) / 2)With Range(x)    .Parent.Activate    .Activate       End With   End Sub
+Option Explicit
+Sub Clear2()
+
+Sheets("DHN Europe 799026").Cells.ClearContents
+Sheets("DHN Europe 799261").Cells.ClearContents
+Sheets("DHN Europe 799271").Cells.ClearContents
+Sheets("DHN Europe 799448").Cells.ClearContents
+Sheets("DHN Non-Europe 799026").Cells.ClearContents
+Sheets("DHN Non-Europe 799448").Cells.ClearContents
+Sheets("DHN Block Europe").Cells.ClearContents
+Sheets("DHN Block Non-Europe").Cells.ClearContents
+    
+End Sub
+
+Sub Einlesen2()
+    
+With Workbooks.Open("S:\INM\MME9EG\Zahlenwerk MMA2EG Equities\DHN\DHN_Europa.xls")
+    .Sheets("Bericht_799026").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Europe 799026").Range("A1")
+    .Sheets("Bericht_799271").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Europe 799271").Range("A1")
+    .Sheets("Bericht_799448").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Europe 799448").Range("A1")
+End With
+
+Workbooks("DHN_Europa.xls").Close
+
+
+With Workbooks.Open("S:\INM\MME9EG\Zahlenwerk MMA2EG Equities\DHN\DHN_Non Europa.xls")
+    .Sheets("Bericht_799026").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Non-Europe 799026").Range("A1")
+    .Sheets("Bericht_799448").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Non-Europe 799448").Range("A1")
+End With
+
+Workbooks("DHN_Non Europa.xls").Close
+
+
+With Workbooks.Open("S:\INM\MME9EG\Zahlenwerk MMA2EG Equities\DHN\DHN_Blockorder_Europa.xls")
+    .Sheets("Bericht1").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Block Europe").Range("A1")
+    .Sheets("Bericht1").Range("B4:IV50000").Copy _
+            ThisWorkbook.Sheets("DHN Block Non-Europe").Range("A1")
+End With
+
+Workbooks("DHN_Blockorder_Europa.xls").Close
+  
+End Sub
+
+
+Sub FindPrecedents()
+     
+    Dim rLast As Range, iLinkNum As Integer, iArrowNum As Integer
+    Dim stMsg As String
+    Dim x As String
+    Dim y As String
+    
+    Dim bNewArrow As Boolean
+    Application.ScreenUpdating = False
+    ActiveCell.ShowPrecedents
+    Set rLast = ActiveCell
+    iArrowNum = 1
+    iLinkNum = 1
+    bNewArrow = True
+    Do
+        Do
+            Application.Goto rLast
+            On Error Resume Next
+            ActiveCell.NavigateArrow TowardPrecedent:=True, ArrowNumber:=iArrowNum, LinkNumber:=iLinkNum
+            If Err.Number > 0 Then Exit Do
+            On Error GoTo 0
+            If rLast.Address(external:=True) = ActiveCell.Address(external:=True) Then Exit Do
+            bNewArrow = False
+            If rLast.Worksheet.Parent.Name = ActiveCell.Worksheet.Parent.Name Then
+                If rLast.Worksheet.Name = ActiveCell.Parent.Name Then
+                     ' local
+                    stMsg = stMsg & Selection.Address
+                Else
+                    stMsg = stMsg & "'" & Selection.Parent.Name & "'!" & Selection.Address
+                End If
+            Else
+                 ' external
+               
+                stMsg = stMsg & vbNewLine & Selection.Address(external:=True)
+            End If
+            iLinkNum = iLinkNum + 1 ' try another  link
+        Loop
+        If bNewArrow Then Exit Do
+        iLinkNum = 1
+        bNewArrow = True
+        iArrowNum = iArrowNum + 1 'try another arrow
+    Loop
+    rLast.Parent.ClearArrows
+    Application.Goto rLast
+   
+   x = Right(stMsg, Len(stMsg) / 2)
+
+
+
+With Range(x)
+    .Parent.Activate
+    .Activate
+End With
+  
+
+End Sub
+
+
+
+
